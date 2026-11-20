@@ -1,0 +1,61 @@
+{% extends "base.nxs" %}
+{% block title %}{{ package['name'] }} — NovaNX{%endblock%}
+{% block body %}
+<section class="package-heading container">
+  <div class="breadcrumb"><a href="/search">Packages</a><span>/</span><span>{{ package['name'] }}</span></div>
+  <div class="package-title-row">
+    <div class="package-title-main"><span class="package-glyph package-glyph-large">{{ package['name'][0:1] }}</span><div><div class="package-label">Nexa package</div><h1>{{ package['name'] }}</h1></div></div>
+    {% if package['is_deprecated'] %}<span class="deprecated-badge">Deprecated</span>{% end if %}
+  </div>
+  <p class="package-description">{{ package['description'] }}</p>
+  <div class="package-byline">Published by <strong>{{ package['author'] }}</strong>
+    {% if package['repository_link'] %}<span>·</span><a href="{{ package['repository_link'] }}" rel="noopener noreferrer">Repository ↗</a>{% end if %}
+    {% if package['homepage_link'] %}<span>·</span><a href="{{ package['homepage_link'] }}" rel="noopener noreferrer">Homepage ↗</a>{% end if %}
+  </div>
+  <div class="install-command"><span>Install</span><code>nova install {{ package['name'] }}</code><span class="install-hint">Run in your project</span></div>
+</section>
+<section class="container package-layout">
+  <div class="package-content">
+    <article class="content-panel readme-panel">
+      <div class="panel-heading"><div><p class="eyebrow">Package documentation</p><h2>README</h2></div><span class="panel-chip">Latest release</span></div>
+      {% if package['latest'] and package['latest']['readme'] %}
+      <pre class="readme-content">{{ package['latest']['readme'] }}</pre>
+      {% else %}
+      <div class="empty-readme"><p>No README was included with the latest release.</p></div>
+      {% end if %}
+    </article>
+    <article class="content-panel">
+      <div class="panel-heading"><div><p class="eyebrow">Release history</p><h2>Versions</h2></div><span class="muted">{{ len(package['versions']) }} total</span></div>
+      <div class="version-list">
+        {% for version in package['versions'] %}
+        <div class="version-row">
+          <div><strong>{{ version['version'] }}</strong>{% if package['latest'] and version['version'] == package['latest']['version'] %}<span class="latest-badge">latest</span>{% end if %}<small>{{ version['created_at'] }}</small></div>
+          <a class="text-link" href="{{ version['download_url'] }}">Download <span aria-hidden="true">↓</span></a>
+        </div>
+        {% end for %}
+        {% if not package['versions'] %}<p class="muted">No releases are available.</p>{% end if %}
+      </div>
+    </article>
+  </div>
+  <aside class="package-sidebar">
+    <article class="sidebar-card">
+      <p class="eyebrow">Package details</p>
+      <dl class="detail-list">
+        <div><dt>Latest version</dt><dd>{% if package['latest'] %}{{ package['latest']['version'] }}{% else %}—{% end if %}</dd></div>
+        <div><dt>License</dt><dd>{% if package['latest'] %}{{ package['latest']['license'] }}{% else %}—{% end if %}</dd></div>
+        <div><dt>Requires Nexa.py</dt><dd>{% if package['latest'] %}{{ package['latest']['requires_nexa'] }}{% else %}—{% end if %}</dd></div>
+        <div><dt>Python</dt><dd>{% if package['latest'] %}{{ package['latest']['python_requires'] }}{% else %}—{% end if %}</dd></div>
+        <div><dt>Downloads</dt><dd>{{ package['download_count'] }}</dd></div>
+        <div><dt>Created</dt><dd>{{ package['created_at'] }}</dd></div>
+      </dl>
+    </article>
+    <article class="sidebar-card">
+      <p class="eyebrow">Dependencies</p>
+      {% if package['latest'] and package['latest']['dependencies'] %}
+      <pre class="dependency-content">{{ package['latest']['dependencies'] }}</pre>
+      {% else %}<p class="muted">No additional dependencies listed.</p>{% end if %}
+    </article>
+    <article class="sidebar-callout"><span class="callout-icon">↗</span><strong>Made something useful?</strong><p>Share your package with the Nexa community.</p><a href="/register">Start publishing →</a></article>
+  </aside>
+</section>
+{% endblock %}

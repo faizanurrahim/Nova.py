@@ -1,0 +1,7 @@
+step 'build':
+    for terminal("win32"):
+        terminal.run("py -m pip install -e .")
+    for ! terminal("win32"):
+        terminal.run("python3 -m pip install -e .")
+    exit 'build'
+__all__=["build]

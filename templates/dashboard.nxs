@@ -1,0 +1,76 @@
+{% extends "base.nxs" %}
+{% block title %}Dashboard — NovaNX{%endblock%}
+{% block body %}
+<section class="dashboard-hero">
+  <div class="container dashboard-hero-inner"><div><p class="eyebrow">Developer workspace</p><h1>Your packages, in one place.</h1><p>Welcome, {{ user['username'] }}. Manage releases and see how your packages are doing.</p></div><a class="button button-light" href="#publish">Publish a package <span aria-hidden="true">↗</span></a></div>
+</section>
+<section class="container dashboard-section">
+  {% if notice %}<div class="notice notice-success" role="status">{{ notice }}</div>{% end if %}
+  <div class="dashboard-summary"><div><p class="eyebrow">Your registry</p><h2>Managed packages</h2></div><div class="summary-count"><strong>{{ len(packages) }}</strong><span>packages</span></div></div>
+  {% if not packages %}<div class="empty-state"><span class="empty-mark">N</span><strong>Your package list is clear.</strong><p>Upload your first validated <code>.tar.nx</code> archive to get started.</p><a href="#publish" class="button button-dark">Publish a package</a></div>{% end if %}
+  <div class="managed-list">
+    {% for package in packages %}
+    <article class="managed-card">
+      <div class="managed-heading"><div><div class="result-title"><h3><a href="/package/{{ package['name'] }}">{{ package['name'] }}</a></h3><span class="version-pill">{% if package['latest'] %}v{{ package['latest']['version'] }}{% else %}no releases{% end if %}</span>{% if package['is_deprecated'] %}<span class="deprecated-badge">Deprecated</span>{% end if %}</div><p>{{ package['description'] }}</p></div><div class="managed-stats"><strong>{{ package['download_count'] }}</strong><small>downloads</small></div></div>
+      <div class="managed-tools">
+        <details class="manage-details"><summary>Edit package details</summary>
+          <form class="stack-form management-form" action="/api/packages/{{ package['name'] }}/manage" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="action" value="update">
+            <label>Description</label><input name="description" type="text" maxlength="500" value="{{ package['description'] }}" required>
+            <label>Repository URL</label><input name="repository_url" type="url" maxlength="2048" value="{{ package['repository_url'] }}">
+            <label>Homepage URL</label><input name="homepage_url" type="url" maxlength="2048" value="{{ package['homepage_url'] }}">
+            {% if package['latest'] %}<label>Latest version README</label><textarea name="readme" rows="8" maxlength="524288">{{ package['latest']['readme'] }}</textarea>{% end if %}
+            <button class="button button-outline button-small" type="submit">Save changes</button>
+          </form>
+        </details>
+        <details class="manage-details"><summary>Upload a new version</summary>
+          <form class="stack-form management-form" action="/api/packages/{{ package['name'] }}/versions" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label for="archive-{{ package['id'] }}">Package archive (.tar.nx)</label><input id="archive-{{ package['id'] }}" name="archive" type="file" accept=".tar.nx,application/x-tar" required>
+            <button class="button button-dark button-small" type="submit">Upload release</button>
+          </form>
+        </details>
+        <details class="manage-details"><summary>Maintainers</summary>
+          <div class="maintainer-list">
+            {% for maintainer in package['maintainers'] %}
+            <div class="maintainer-row"><span><strong>{{ maintainer['username'] }}</strong><small>{{ maintainer['permission'] }}</small></span>{% if package['owner_id'] == user['id'] %}<form action="/api/packages/{{ package['name'] }}/manage" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="action" value="remove_maintainer"><input type="hidden" name="user_id" value="{{ maintainer['user_id'] }}"><button class="button button-quiet button-small" type="submit">Remove</button></form>{% end if %}</div>
+            {% end for %}
+          </div>
+          {% if package['owner_id'] == user['id'] %}
+          <form class="stack-form management-form" action="/api/packages/{{ package['name'] }}/manage" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="action" value="add_maintainer">
+            <label>NovaNX username</label><input name="username" minlength="3" maxlength="30" required>
+            <label>Permission</label><select name="permission"><option value="publish">Publish versions</option><option value="read">Read only</option><option value="manage">Manage package</option></select>
+            <button class="button button-outline button-small" type="submit">Add maintainer</button>
+          </form>
+          {% end if %}
+        </details>
+        <details class="manage-details"><summary>Package status and access</summary>
+          <form class="inline-management" action="/api/packages/{{ package['name'] }}/manage" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="action" value="deprecate">
+            <input type="hidden" name="is_deprecated" value="{% if package['is_deprecated'] %}false{% else %}true{% end if %}">
+            <button class="button button-outline button-small" type="submit">{% if package['is_deprecated'] %}Undeprecate{% else %}Deprecate{% end if %}</button>
+          </form>
+          {% if package['owner_id'] == user['id'] %}
+          <form class="inline-management" action="/api/packages/{{ package['name'] }}/manage" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="action" value="delete">
+            <button class="button button-danger button-small" type="submit">Delete package</button>
+          </form>
+          {% end if %}
+        </details>
+      </div>
+    </article>
+    {% end for %}
+  </div>
+</section>
+<section class="container publish-section" id="publish">
+  <div class="publish-copy"><p class="eyebrow">New to NovaNX?</p><h2>Publish a release.</h2><p>Upload a Nexa package archive. We validate its manifest, verify safe archive paths, and calculate the release checksum before storing it.</p><ul><li>Include a <code>nexa.toml</code> manifest</li><li>Use a unique semantic version</li><li>Archives are never executed</li></ul></div>
+  <form class="publish-form" action="/api/packages/publish" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <span class="upload-mark">↑</span><h3>Upload your package</h3><p>Choose your validated <code>.tar.nx</code> release.</p>
+    <label for="new-archive">Package archive</label><input id="new-archive" name="archive" type="file" accept=".tar.nx,application/x-tar" required>
+    <button class="button button-dark button-wide" type="submit">Publish package <span aria-hidden="true">→</span></button>
+    <small>Maximum archive size: 24 MiB. The package name and version come from its manifest.</small>
+  </form>
+</section>
+{% endblock %}

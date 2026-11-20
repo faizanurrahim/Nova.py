@@ -1,0 +1,46 @@
+{% extends "base.nxs" %}
+{% block title %}Search packages — NovaNX{%endblock%}
+{% block body %}
+<section class="page-hero container">
+  <p class="eyebrow">Discover the ecosystem</p>
+  <h1>Find your next dependency.</h1>
+  <p>Search package names, descriptions, and maintainers.</p>
+  <form class="search-bar search-page-bar" action="/search" method="get" role="search">
+    <label class="visually-hidden" for="package-search">Search packages</label>
+    <span class="search-icon" aria-hidden="true">⌕</span>
+    <input id="package-search" type="search" name="q" value="{{ query }}" placeholder="Try “http”, “database”, or an author" maxlength="100">
+    <button class="button button-dark" type="submit">Search</button>
+  </form>
+</section>
+<section class="container results-section">
+  {% if notice %}<div class="notice notice-warn">{{ notice }}</div>{% end if %}
+  <div class="results-heading">
+    <div><h2>{% if query %}Results for “{{ query }}”{% else %}All packages{% end if %}</h2><p>{{ result_count }} packages found</p></div>
+    <form class="sort-form" action="/search" method="get">
+      <input type="hidden" name="q" value="{{ query }}">
+      <label for="sort">Sort by</label>
+      <select id="sort" name="sort">
+        <option value="relevance" {% if sort == 'relevance' %}selected{% end if %}>Relevance</option>
+        <option value="popular" {% if sort == 'popular' %}selected{% end if %}>Most popular</option>
+        <option value="newest" {% if sort == 'newest' %}selected{% end if %}>Newest</option>
+      </select>
+      <button class="button button-outline button-small" type="submit">Apply</button>
+    </form>
+  </div>
+  <div class="result-list">
+    {% for package in packages %}
+    <article class="result-card">
+      <div class="result-main">
+        <div class="result-title"><h3><a href="/package/{{ package['name'] }}">{{ package['name'] }}</a></h3><span class="version-pill">{% if package['latest'] %}v{{ package['latest']['version'] }}{% else %}new{% end if %}</span></div>
+        <p>{{ package['description'] }}</p>
+        <div class="card-meta"><span>by {{ package['author'] }}</span><span>{{ package['download_count'] }} downloads</span></div>
+      </div>
+      <a class="result-arrow" href="/package/{{ package['name'] }}" aria-label="View {{ package['name'] }}">↗</a>
+    </article>
+    {% end for %}
+    {% if not packages %}
+    <div class="empty-state empty-search"><span class="empty-mark">⌕</span><strong>{% if query %}No packages match that search.{% else %}No packages yet.{% end if %}</strong><p>Try a different term, or publish the first package for Nexa.py.</p><a class="button button-dark" href="/register">Publish a package</a></div>
+    {% end if %}
+  </div>
+</section>
+{% endblock %}

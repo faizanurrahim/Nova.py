@@ -1,0 +1,5 @@
+{% extends "base.nxs" %}
+{% block title %}{{ title }} — NovaNX{%endblock%}
+{% block body %}
+<section class="empty-page container"><span class="empty-mark">?</span><p class="eyebrow">404 — Not found</p><h1>{{ title }}</h1><p>{{ message }}</p><a href="/search" class="button button-dark">Browse packages</a></section>
+{% endblock %}

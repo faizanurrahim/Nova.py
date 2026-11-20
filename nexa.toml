@@ -1,0 +1,11 @@
+[package]
+name = "NovaNX"
+version = "0.1.0"
+description = "The Nexa.py package registry"
+requires_nexa = ">=0.5.2"
+python_requires = ">=3.11"
+[tool.nova.setup]
+script = ['index.nvs']
+
+[scripts]
+serve = "app.py"

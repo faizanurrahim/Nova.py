@@ -1,0 +1,33 @@
+{% extends "base.nxs" %}
+{% block title %}{% if mode == 'login' %}Sign in{% else %}{% if mode == 'created' %}Account created{% else %}Create account{% end if %}{% end if %} — NovaNX{%endblock%}
+{% block body %}
+<section class="auth-wrap container">
+  <div class="auth-aside">
+    <span class="auth-mark">N</span><p class="eyebrow">Nexa packages, together</p>
+    <h1>{% if mode == 'login' %}Welcome back.{% else %}{% if mode == 'created' %}Your account is ready.{% else %}Bring your package to NovaNX.{% end if %}{% end if %}</h1>
+    <p>{% if mode == 'login' %}Sign in to manage releases, maintainers, and package insights.{% else %}{% if mode == 'created' %}Your NovaNX session is active.{% else %}Create a developer account to publish and maintain Nexa packages.{% end if %}{% end if %}</p>
+    <div class="auth-quote"><span>“</span><p>A thoughtful package can make every Nexa project a little better.</p></div>
+  </div>
+  <div class="auth-panel">
+    <p class="eyebrow">{% if mode == 'login' %}Your account{% else %}{% if mode == 'created' %}Welcome{% else %}Get started{% end if %}{% end if %}</p>
+    <h2>{% if mode == 'login' %}Sign in{% else %}{% if mode == 'created' %}Account created{% else %}Create your account{% end if %}{% end if %}</h2>
+    {% if error %}<div class="notice notice-error" role="alert">{{ error }}</div>{% end if %}
+    {% if message %}<div class="notice notice-success" role="status">{{ message }}</div>{% end if %}
+    {% if mode == 'created' %}
+    <a class="button button-dark button-wide" href="/dashboard">Continue to your dashboard <span aria-hidden="true">→</span></a>
+    {% else %}
+    <form class="stack-form" action="{% if mode == 'login' %}/login{% else %}/register{% end if %}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      {% if mode == 'register' %}
+      <label for="username">Username</label><input id="username" name="username" type="text" minlength="3" maxlength="30" pattern="[a-z0-9][a-z0-9_-]*" autocomplete="username" required>
+      {% end if %}
+      <label for="email">Email address</label><input id="email" name="email" type="email" maxlength="320" autocomplete="email" required>
+      <label for="password">Password</label><input id="password" name="password" type="password" minlength="{% if mode == 'register' %}10{% else %}1{% end if %}" maxlength="128" autocomplete="{% if mode == 'login' %}current-password{% else %}new-password{% end if %}" required>
+      <button class="button button-dark button-wide" type="submit">{% if mode == 'login' %}Sign in{% else %}Create account{% end if %}<span aria-hidden="true">→</span></button>
+    </form>
+    <p class="auth-switch">{% if mode == 'login' %}New to NovaNX? <a href="/register">Create an account</a>{% else %}Already registered? <a href="/login">Sign in</a>{% end if %}</p>
+    {% end if %}
+    <p class="form-fineprint">Your credentials are handled by Supabase Authentication. NovaNX never stores your password.</p>
+  </div>
+</section>
+{% endblock %}

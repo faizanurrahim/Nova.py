@@ -1,0 +1,2 @@
+"""NovaNX registry application."""
+

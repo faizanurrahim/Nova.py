@@ -1,0 +1,93 @@
+{% extends "base.nxs" %}
+{% block title %}NovaNX — The Nexa.py package registry{%endblock%}
+{% block body %}
+<section class="hero-wrap">
+  <div class="hero container">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="status-dot"></span> The official Nexa.py registry</div>
+      <h1>Good packages.<br><span>Better projects.</span></h1>
+      <p class="hero-lede">Find the tools that fit your Nexa project, or share something useful with the ecosystem.</p>
+      <form class="search-bar search-bar-hero" action="/search" method="get" role="search">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <label class="visually-hidden" for="hero-search">Search Nexa packages</label>
+        <input id="hero-search" type="search" name="q" placeholder="Search packages, authors, descriptions…" maxlength="100">
+        <button class="button button-dark" type="submit">Search <span aria-hidden="true">→</span></button>
+      </form>
+      <div class="hero-note"><span class="key-hint">nova install</span> <span>simple, reproducible installs</span></div>
+    </div>
+    <div class="hero-aside" aria-label="Example install command">
+      <div class="terminal-top"><span></span><span></span><span></span><small>project terminal</small></div>
+      <div class="terminal-body">
+        <div><span class="terminal-prompt">$</span> nova install nexaextra</div>
+        <div class="terminal-faint">Resolving Nexa dependencies…</div>
+        <div class="terminal-success"><span>✓</span> nexaextra installed</div>
+        <div class="terminal-faint terminal-bottom">Ready in your project-local environment.</div>
+      </div>
+      <div class="terminal-caption"><span class="caption-line"></span> Keep dependencies close to your project.</div>
+    </div>
+    <div class="hero-orbit orbit-one"></div>
+    <div class="hero-orbit orbit-two"></div>
+  </div>
+</section>
+
+{% if notice %}
+<div class="container"><div class="notice notice-warn">{{ notice }}</div></div>
+{% end if %}
+
+<section class="section container">
+  <div class="section-heading">
+    <div><p class="eyebrow">A good place to start</p><h2>Popular packages</h2></div>
+    <a class="text-link" href="/search?sort=popular">Explore the registry <span aria-hidden="true">→</span></a>
+  </div>
+  <div class="package-grid">
+    {% for package in popular %}
+    <article class="package-card">
+      <div class="card-topline"><span class="package-glyph">{{ package['name'][0:1] }}</span><span class="version-pill">{% if package['latest'] %}v{{ package['latest']['version'] }}{% else %}new{% end if %}</span></div>
+      <h3><a href="/package/{{ package['name'] }}">{{ package['name'] }}</a></h3>
+      <p>{{ package['description'] }}</p>
+      <div class="card-meta"><span>by {{ package['author'] }}</span><span>{{ package['download_count'] }} downloads</span></div>
+    </article>
+    {% end for %}
+    {% if not popular %}
+    <div class="empty-state"><strong>Nothing published yet.</strong><p>Be the first to share a Nexa package.</p><a class="text-link" href="/register">Create an account →</a></div>
+    {% end if %}
+  </div>
+</section>
+
+<section class="section section-recent">
+  <div class="container">
+    <div class="section-heading"><div><p class="eyebrow">Fresh off the registry</p><h2>Recently published</h2></div><a class="text-link" href="/search?sort=newest">See what's new <span aria-hidden="true">→</span></a></div>
+    <div class="recent-list">
+      {% for package in recent %}
+      <a class="recent-row" href="/package/{{ package['name'] }}">
+        <span class="recent-icon">{{ package['name'][0:1] }}</span>
+        <span class="recent-main"><strong>{{ package['name'] }}</strong><small>{{ package['description'] }}</small></span>
+        <span class="recent-author">{{ package['author'] }}</span>
+        <span class="version-pill">{% if package['latest'] %}v{{ package['latest']['version'] }}{% else %}new{% end if %}</span>
+        <span class="row-arrow" aria-hidden="true">↗</span>
+      </a>
+      {% end for %}
+      {% if not recent %}<p class="muted">New packages will appear here as developers publish them.</p>{% end if %}
+    </div>
+  </div>
+</section>
+
+<section class="section container">
+  <div class="section-heading"><div><p class="eyebrow">Small, focused, useful</p><h2>From discovery to install</h2></div><a class="text-link" href="/docs">Read the guide <span aria-hidden="true">→</span></a></div>
+  <div class="steps-grid">
+    <article class="step-card"><span class="step-number">01</span><h3>Find your package</h3><p>Search package names, descriptions, and maintainers to find the right building block.</p><a href="/search">Explore packages <span aria-hidden="true">→</span></a></article>
+    <article class="step-card"><span class="step-number">02</span><h3>Install with Nova</h3><p>Nova reads your project config and keeps Nexa dependencies inside the local environment.</p><code>nova install nexaextra</code></article>
+    <article class="step-card"><span class="step-number">03</span><h3>Build together</h3><p>Publish a versioned <code>.tar.nx</code> archive and give other Nexa developers a dependable release.</p><a href="/register">Publish a package <span aria-hidden="true">→</span></a></article>
+  </div>
+</section>
+
+<section class="stats-band">
+  <div class="container stats-inner">
+    <div><p class="eyebrow">Growing together</p><h2>A home for Nexa packages.</h2></div>
+    <div class="stat"><strong>{{ stats['packages'] }}</strong><span>packages</span></div>
+    <div class="stat"><strong>{{ stats['downloads'] }}</strong><span>downloads</span></div>
+    <div class="stat"><strong>{{ stats['authors'] }}</strong><span>authors</span></div>
+    <a class="button button-light" href="/register">Share your work <span aria-hidden="true">↗</span></a>
+  </div>
+</section>
+{% endblock %}

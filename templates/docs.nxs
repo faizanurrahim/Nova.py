@@ -1,0 +1,35 @@
+{% extends "base.nxs" %}
+{% block title %}Documentation — NovaNX{%endblock%}
+{% block body %}
+<section class="docs-hero">
+  <div class="container"><p class="eyebrow">NovaNX documentation</p><h1>Build with the Nexa ecosystem.</h1><p>A practical guide to finding, installing, and publishing Nexa packages.</p></div>
+</section>
+<section class="container docs-layout">
+  <nav class="docs-toc" aria-label="On this page">
+    <strong>On this page</strong>
+    <a href="#about">About NovaNX</a><a href="#installing-nova">Installing Nova</a><a href="#searching">Searching packages</a><a href="#installing-packages">Installing packages</a><a href="#updating">Updating packages</a><a href="#publishing">Publishing packages</a><a href="#metadata">Package metadata</a><a href="#creating">Creating Nexa packages</a><a href="#versioning">Versioning</a><a href="#security">Package security</a>
+  </nav>
+  <div class="docs-content">
+    <article id="about"><p class="eyebrow">01 — Registry</p><h2>What is NovaNX?</h2><p>NovaNX is the package registry for projects built with Nexa.py. It indexes package metadata and provides versioned <code>.tar.nx</code> archives for Nova, Nexa's project and environment manager.</p><p>NovaNX does not run code from uploaded packages. Releases are stored as archives and served as downloads.</p></article>
+    <article id="installing-nova"><p class="eyebrow">02 — Setup</p><h2>Installing Nova</h2><p>Install Nova using its official Nexa.py distribution instructions. In a project, Nova reads <code>nexa.toml</code>, creates a local <code>.nova</code> environment, and resolves Python and Nexa dependencies for that project.</p><div class="docs-note"><strong>Keep installs project-local.</strong><span>Nova's virtual environment and Nexa library directory belong to the project, not the global Python installation.</span></div></article>
+    <article id="searching"><p class="eyebrow">03 — Discovery</p><h2>Searching packages</h2><p>Use the <a href="/search">package search</a> to look up a package by its name, description, or author. Sort results by relevance, popularity, or publication date. Package pages list releases, compatibility, dependencies, and download statistics.</p></article>
+    <article id="installing-packages"><p class="eyebrow">04 — Install</p><h2>Installing packages</h2><p>Run the install command from your project directory:</p><pre class="code-block"><code>nova install nexaextra</code></pre><p>Nova uses the package name and version metadata registered for the archive. Add the dependency through Nova so it can be tracked in your project configuration.</p></article>
+    <article id="updating"><p class="eyebrow">05 — Updates</p><h2>Updating packages</h2><p>Use Nova's update command for the installed package, or update your project dependencies using the commands supported by your Nova version. Review the release history and compatibility requirements before adopting a new release.</p></article>
+    <article id="publishing"><p class="eyebrow">06 — Publish</p><h2>Publishing packages</h2><p>Create an account, open the <a href="/dashboard">publishing dashboard</a>, and upload a <code>.tar.nx</code> release. NovaNX validates archive paths and metadata, calculates a SHA-256 checksum, stores the archive, and publishes version information. Package contents are never executed.</p><p>Only the package owner or an authorized maintainer can upload versions or modify package settings.</p></article>
+    <article id="metadata"><p class="eyebrow">07 — Manifest</p><h2>Package metadata</h2><p>Include a <code>nexa.toml</code> file at the archive root or inside one top-level package directory. The manifest must define a <code>[package]</code> table with a lowercase name and a semantic version.</p><pre class="code-block"><code>[package]
+name = "nexaextra"
+version = "1.2.0"
+description = "Helpful Nexa utilities"
+license = "MIT"
+requires_nexa = ">=0.5.2"
+python_requires = ">=3.11"
+repository_url = "https://github.com/example/nexaextra"
+
+[dependencies]
+httpx = ">=0.27"</code></pre><p>Include a UTF-8 <code>README.md</code> alongside the manifest. Dependencies may be written as a TOML table or an array of strings.</p></article>
+    <article id="creating"><p class="eyebrow">08 — Package development</p><h2>Creating Nexa packages</h2><p>Follow Nexa.py's package structure and use the Nexa APIs supported by the version you declare. Package an archive with a single manifest and README, and make sure files use relative paths. NovaNX rejects links, special files, traversal paths, malformed manifests, and oversized archives.</p></article>
+    <article id="versioning"><p class="eyebrow">09 — Releases</p><h2>Package versioning</h2><p>Use semantic versions in <code>major.minor.patch</code> form, optionally with prerelease or build metadata. Every published version is immutable. Publish a new version instead of replacing an existing release.</p></article>
+    <article id="security"><p class="eyebrow">10 — Security</p><h2>Package security</h2><p>Inspect a package's source and release metadata before installing it. NovaNX stores the SHA-256 checksum, blocks unsafe archive members, enforces an upload limit, and never extracts or executes uploaded content.</p><p>Keep authentication and Supabase service-role credentials on the server. Never place service credentials in a template, public configuration, or browser request.</p></article>
+  </div>
+</section>
+{% endblock %}

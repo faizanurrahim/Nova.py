@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Discover, install, and publish packages for Nexa.py.">
+  <title>{% block title %}NovaNX — Nexa.py packages{%endblock%}</title>
+  <link rel="stylesheet" href="/static/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="NovaNX home">
+      <span class="brand-mark">N</span><span>Nova<span class="brand-accent">NX</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="/search">Explore</a>
+      <a href="/docs">Documentation</a>
+      {% if user %}
+      <a href="/dashboard">Dashboard</a>
+      {% else %}
+      <a href="/login">Sign in</a>
+      {% end if %}
+    </nav>
+    <div class="header-actions">
+      <label class="theme-switch" for="theme-toggle">
+        <input id="theme-toggle" type="checkbox" aria-label="Toggle color theme">
+        <span>Theme</span>
+      </label>
+      {% if user %}
+      <form class="inline-form" action="/logout" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="button button-quiet button-small" type="submit">Sign out</button>
+      </form>
+      {% else %}
+      <a class="button button-dark button-small" href="/register">Publish a package <span aria-hidden="true">↗</span></a>
+      {% end if %}
+    </div>
+  </header>
+  <main>
+    {% block body %}{%endblock%}
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a class="brand footer-brand" href="/"><span class="brand-mark">N</span><span>Nova<span class="brand-accent">NX</span></span></a>
+      <p>The package registry for Nexa.py.</p>
+      <div class="footer-links"><a href="/docs">Documentation</a><a href="/search">Browse packages</a><a href="/dashboard">Publish</a></div>
+      <span class="footer-note">Built for the Nexa community</span>
+    </div>
+  </footer>
+</body>
+</html>
